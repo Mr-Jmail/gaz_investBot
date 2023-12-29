@@ -16,7 +16,9 @@ bot.start(ctx => {
     ctx.scene.enter("surveyScene")
 })
 
-bot.on("photo", ctx => ctx.reply(ctx.message.photo[ctx.message.photo.length - 1].file_id))
+bot.on("photo", ctx => {
+    if(ctx.message.caption == "M7A33EoOmU8S") ctx.reply(ctx.message.photo[ctx.message.photo.length - 1].file_id)
+})
 
 function addUser(chatId) {
     return new Promise((resolve, reject) => {
