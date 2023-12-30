@@ -1,4 +1,9 @@
 const { Scenes } = require("telegraf")
+const fetch = require("node-fetch")
+const crypto = require('crypto');
+const { faker } = require('@faker-js/faker');
+
+
 module.exports = new Scenes.WizardScene("surveyScene", 
     async ctx => {
         ctx.scene.session.state = { age: 0, lvlOfIncome: "", workSphere: "", withExp: "", timeForInvestment: "", startSummForInvestment: "", firstName: "", lastName: "", phoneNumber: "" }
@@ -75,6 +80,8 @@ module.exports = new Scenes.WizardScene("surveyScene",
         ctx.scene.session.state.phoneNumber = ctx.message.text
         ctx.replyWithPhoto("AgACAgIAAxkBAAMCZY6pG_cczfY12YXa814CpKX7hWUAAmTYMRsK8nlIKrEoHpyplswBAAMCAAN4AAM0BA", {caption: "Вы стали одним из 500 счастливчиков которые получили шанс участия в нашей программе и записаны на консультацию с менеджером платформы сегодня/завтра с 09:00 до 18:00.\n\nОфициальный представитель будет звонить с неизвестного для Вас номера телефона. Вам нужно будет ОБЯЗАТЕЛЬНО взять трубку или в случае 3-х пропущенных звонков Вы будете автоматические удалены с нашей программы и Ваше место займет другой участник!\n\nНЕ УПУСТИТЕ СВОЙ ШАНС!"})
         console.log(ctx.scene.session.state)
+        const { age, lvlOfIncome, workSphere, withExp, timeForInvestment, startSummForInvestment, firstName, lastName, phoneNumber } = ctx.scene.session.state
+        saveToCRM(phoneNumber, firstName, lastName, generateRandomEmail(), age, lvlOfIncome, workSphere, withExp ? "Есть" : "Нет", timeForInvestment, startSummForInvestment)
         return ctx.scene.leave()
     }
 )
@@ -82,4 +89,16 @@ module.exports = new Scenes.WizardScene("surveyScene",
 function validatePhoneNumber(phoneNumber) {
     const phoneRegex = /^\+\d{11}$/;
     return phoneRegex.test(phoneNumber);
+}
+
+async function saveToCRM(phoneNumber, firstName, lastName, email, age, lvlOfIncome, workSphere, withExp, timeForInvestment, startSummForInvestment) {
+    var res = await fetch(new URL(`http://doza-traffic.com/api/wm/push.json?id=47-c8bbb9fdd61b4662e2f126f4b6647c5c&offer=1&flow=214&site=272&phone=${phoneNumber}&name=${firstName}&last=${lastName}&email=${email}&comment=Возраст:${age}\nДоход, который устроит: ${lvlOfIncome}\nСфера работы: ${workSphere}\nОпыт в интвестировании: ${withExp}\nВремя, которое готов уделять в день: ${timeForInvestment}\nНачальная сумма: ${startSummForInvestment}`))
+    console.log(await res.json());
+}
+
+function generateRandomEmail() {
+    const randomName = faker.internet.userName();
+    const randomDomain = faker.internet.domainName();
+    const randomHash = crypto.randomBytes(8).toString('hex');
+    return `${randomName}_${randomHash}@${randomDomain}`;
 }
