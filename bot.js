@@ -3,7 +3,7 @@ require("dotenv").config({path: path.join(__dirname, ".env")})
 const { Telegraf, Scenes, session } = require("telegraf")
 const fs = require("fs")
 
-const bot = new Telegraf("6913852440:AAE8WDc01ZYT8cM2mzHfoHIYRK39rgd0S8A")
+const bot = new Telegraf(process.env.botToken)
 
 const surveyScene = require("./surveyScene")
 
