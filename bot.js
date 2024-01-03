@@ -1,6 +1,7 @@
+const path = require("path")
+require("dotenv").config({path: path.join(__dirname, ".env")})
 const { Telegraf, Scenes, session } = require("telegraf")
 const fs = require("fs")
-const path = require("path")
 
 const bot = new Telegraf("6913852440:AAE8WDc01ZYT8cM2mzHfoHIYRK39rgd0S8A")
 

@@ -1,3 +1,5 @@
+const path = require("path")
+require("dotenv").config({path: path.join(__dirname, ".env")})
 const { Scenes } = require("telegraf")
 const fetch = require("node-fetch")
 const crypto = require('crypto');
@@ -92,7 +94,7 @@ function validatePhoneNumber(phoneNumber) {
 }
 
 async function saveToCRM(phoneNumber, firstName, lastName, email, age, lvlOfIncome, workSphere, withExp, timeForInvestment, startSummForInvestment) {
-    var res = await fetch(new URL(`http://doza-traffic.com/api/wm/push.json?id=47-c8bbb9fdd61b4662e2f126f4b6647c5c&offer=1&flow=214&site=272&phone=${phoneNumber}&name=${firstName}&last=${lastName}&email=${email}&comment=Возраст:${age}\nДоход, который устроит: ${lvlOfIncome}\nСфера работы: ${workSphere}\nОпыт в интвестировании: ${withExp}\nВремя, которое готов уделять в день: ${timeForInvestment}\nНачальная сумма: ${startSummForInvestment}`))
+    var res = await fetch(new URL(`http://doza-traffic.com/api/wm/push.json?id=${process.env.apiToken}&offer=1&flow=214&site=272&phone=${phoneNumber}&name=${firstName}&last=${lastName}&email=${email}&comment=Возраст:${age}\nДоход, который устроит: ${lvlOfIncome}\nСфера работы: ${workSphere}\nОпыт в интвестировании: ${withExp}\nВремя, которое готов уделять в день: ${timeForInvestment}\nНачальная сумма: ${startSummForInvestment}`))
     console.log(await res.json());
 }
 
