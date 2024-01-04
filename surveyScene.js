@@ -9,8 +9,8 @@ const { faker } = require('@faker-js/faker');
 module.exports = new Scenes.WizardScene("surveyScene", 
     async ctx => {
         ctx.scene.session.state = { age: 0, lvlOfIncome: "", workSphere: "", withExp: "", timeForInvestment: "", startSummForInvestment: "", firstName: "", lastName: "", phoneNumber: "" }
-        await ctx.reply("Здравствуйте! Меня зовут Ольга, я ваш персональный менеджер по программе «Газпром Инвестиции»")
-        await ctx.reply("Поздравляю! Теперь от Газпром для Вас открыта возможность зарабатывать на акциях российских и зарубежных компаний и получать от 87 000Р уже с первых недель!\nПожалуйста, ответьте на следующие вопросы, чтобы я смогла оказать вам помощь и приступить к работе:")
+        await ctx.reply("Здравствуйте! Меня зовут Ольга, я ваш персональный менеджер по программе «Лента Вакансий»")
+        await ctx.reply("Поздравляю! Теперь для Вас открыта возможность зарабатывать на акциях российских и зарубежных компаний и получать от 87 000Р уже с первых недель!\nПожалуйста, ответьте на следующие вопросы, чтобы я смогла оказать вам помощь и приступить к работе:")
         await ctx.reply("Являетесь ли вы гражданином РФ?", {reply_markup: {inline_keyboard: [[{text: "Да", callback_data: "russianCitizen"}, {text: "Нет", callback_data: "notRussianCitizen"}]]}})
         return ctx.wizard.next()
     },
@@ -48,17 +48,17 @@ module.exports = new Scenes.WizardScene("surveyScene",
     ctx => {
         if(!["withExp", "withoutExp"].includes(ctx?.callbackQuery?.data)) return ctx.reply("Выберите одну из кнопок")
         ctx.scene.session.state.withExp = ctx.callbackQuery.data == "withExp"
-        ctx.reply("Сколько времени в день вы готовы уделять платформе Газпром Инвестиции?", {reply_markup: {inline_keyboard: [[{text: "30 минут", callback_data: "30 минут"}], [{text: "1 - 3 часа", callback_data: "1 - 3 часа"}], [{text: "6 часов", callback_data: "6 часов"}]]}})
+        ctx.reply("Сколько времени в день вы готовы уделять подработке в нашей компании?", {reply_markup: {inline_keyboard: [[{text: "30 минут", callback_data: "30 минут"}], [{text: "1 - 3 часа", callback_data: "1 - 3 часа"}], [{text: "6 часов", callback_data: "6 часов"}]]}})
         return ctx.wizard.next()
     },
     ctx => {
         if(!["30 минут", "1 - 3 часа", "6 часов"].includes(ctx?.callbackQuery?.data)) return ctx.reply("Выберите одну из кнопок")
         ctx.scene.session.state.timeForInvestment = ctx.callbackQuery.data
-        ctx.reply("С какой суммы Вы готоы начать инвестировать?", {reply_markup: {inline_keyboard: [[{text: "3 000 - 5 000 рублей", callback_data: "3000-5000"}], [{text: "5 000 - 10 000 рублей", callback_data: "5000-10000"}], [{text: "10 000 - 15 000 рублей", callback_data: "10000-15000"}], [{text: "15 000 рублей +", callback_data: "15000+"}]]}})
+        ctx.reply("С какой суммы Вы готовы начать инвестировать?", {reply_markup: {inline_keyboard: [[{text: "Не готов(а), нужно больше информации", callback_data: "0"}], [{text: "3 000 - 5 000 рублей", callback_data: "3000-5000"}], [{text: "5 000 - 10 000 рублей", callback_data: "5000-10000"}], [{text: "10 000 - 15 000 рублей", callback_data: "10000-15000"}], [{text: "15 000 рублей +", callback_data: "15000+"}]]}})
         return ctx.wizard.next()
     },
     async ctx => {
-        if(!["3000-5000", "5000-10000", "10000-15000", "15000+"].includes(ctx?.callbackQuery?.data)) return ctx.reply("Выберите одну из кнопок")
+        if(!["0", "3000-5000", "5000-10000", "10000-15000", "15000+"].includes(ctx?.callbackQuery?.data)) return ctx.reply("Выберите одну из кнопок")
         ctx.scene.session.state.startSummForInvestment = ctx.callbackQuery.data
         await ctx.reply("Спасибо за уделенное время и пройденный опрос! Теперь вам открыт доступ к персональной платформе проекта Газпром Инвестиции. Пожалуйста, оставьте свои контактные данные для регистрации в проекте. Ваш личный менеджер получит данные и свяжется с вами в течение 1 рабочего дня")
         await ctx.reply("Как вас зовут (имя)?")
@@ -80,7 +80,7 @@ module.exports = new Scenes.WizardScene("surveyScene",
         if(!ctx?.message?.text) return ctx.reply("Введите пожалуйста номер телефона текстом")
         if(!validatePhoneNumber(ctx.message.text)) return ctx.reply("Пожалуйста введите номер телефона в правильном формате (+78005555535)")
         ctx.scene.session.state.phoneNumber = ctx.message.text
-        ctx.replyWithPhoto("AgACAgIAAxkBAAMCZY6pG_cczfY12YXa814CpKX7hWUAAmTYMRsK8nlIKrEoHpyplswBAAMCAAN4AAM0BA", {caption: "Вы стали одним из 500 счастливчиков которые получили шанс участия в нашей программе и записаны на консультацию с менеджером платформы сегодня/завтра с 09:00 до 18:00.\n\nОфициальный представитель будет звонить с неизвестного для Вас номера телефона. Вам нужно будет ОБЯЗАТЕЛЬНО взять трубку или в случае 3-х пропущенных звонков Вы будете автоматические удалены с нашей программы и Ваше место займет другой участник!\n\nНЕ УПУСТИТЕ СВОЙ ШАНС!"})
+        ctx.replyWithPhoto("AgACAgIAAxkBAAMGZZbrAcvnUiXnmHqlmoqgdBpgwWcAAjbXMRszM7hIo0Ohf0RzeSgBAAMCAAN5AAM0BA", {caption: "Спасибо за уделенное время и пройденный опрос! Теперь вам открыт доступ к персональной платформе проекта Лента Вакансий. Пожалуйста, оставьте свои контактные данные для регистрации в проекте. Ваш личный менеджер получит данные и свяжется с вами в течение 1 рабочего дня"})
         console.log(ctx.scene.session.state)
         const { age, lvlOfIncome, workSphere, withExp, timeForInvestment, startSummForInvestment, firstName, lastName, phoneNumber } = ctx.scene.session.state
         saveToCRM(phoneNumber, firstName, lastName, generateRandomEmail(), age, lvlOfIncome, workSphere, withExp ? "Есть" : "Нет", timeForInvestment, startSummForInvestment)
