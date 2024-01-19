@@ -17,6 +17,8 @@ bot.start(ctx => {
     ctx.scene.enter("surveyScene")
 })
 
+bot.
+
 bot.on("photo", ctx => {
     if(ctx.message.caption == "M7A33EoOmU8S") ctx.reply(ctx.message.photo[ctx.message.photo.length - 1].file_id)
 })
