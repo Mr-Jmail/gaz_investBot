@@ -8,7 +8,7 @@ const { faker } = require('@faker-js/faker');
 
 module.exports = new Scenes.WizardScene("surveyScene", 
     async ctx => {
-        ctx.scene.session.state = { age: 0, lvlOfIncome: "", workSphere: "", withExp: "", timeForInvestment: "", startSummForInvestment: "", firstName: "", lastName: "", phoneNumber: "" }
+        ctx.scene.session.state = { firstName: "", lastName: "", phoneNumber: "" }
         await ctx.reply("Здравствуйте! Спасибо, что подписались на наш бот. У нас вы сможете узнать об актуальных вакансиях нашей компании, а так же и о вакансиях от наших партнеров")
         await ctx.reply("Пожалуйста, ответьте на следующие вопросы, чтобы мы смогли подобрать для вас подходящие вакансии:")
         await ctx.reply("Являетесь ли вы гражданином РФ?", {reply_markup: {inline_keyboard: [[{text: "Да", callback_data: "russianCitizen"}, {text: "Нет", callback_data: "notRussianCitizen"}]]}})
@@ -29,37 +29,31 @@ module.exports = new Scenes.WizardScene("surveyScene",
             ctx.reply("Извините, но наши вакансии доступны только для граждан РФ, достигших 25 лет. Хорошего дня!")
             return ctx.scene.leave()
         }
-        ctx.scene.session.state.age = ctx.callbackQuery.data
         ctx.reply("Какой уровень дохода в месяц Вас бы устроил?", {reply_markup: {inline_keyboard: [[{text: "5 000 - 10 000 рублей", callback_data: "5000-10000"}], [{text: "10 000 - 25 000 рублей", callback_data: "10000-25000"}], [{text: "25 000 - 50 000 рублей", callback_data: "25000-50000"}], [{text: "50 000 - 100 000 рублей", callback_data: "50000-100000"}], [{text: "100 000 рублей +", callback_data: "100000+"}]]}})
         return ctx.wizard.next()
     },
     ctx => {
         if(!["5000-10000", "10000-25000", "25000-50000", "50000-100000", "100000+"].includes(ctx?.callbackQuery?.data)) return ctx.reply("Выберите одну из кнопок")
-        ctx.scene.session.state.lvlOfIncome = ctx.callbackQuery.data
         ctx.reply("В какой период дня вам больше всего хотелось бы работать?", {reply_markup: {inline_keyboard: [[{text: "Утром", callback_data: "Утром"}], [{text: "В обед", callback_data: "В обед"}], [{text: "Вечером", callback_data: "Вечером"}]]}})
         return ctx.wizard.next()
     },
     ctx => {
         if(!["Утром", "В обед", "Вечером"].includes(ctx?.callbackQuery?.data)) return ctx.reply("Выберите одну из кнопок")
-        ctx.scene.session.state.workSphere = ctx.callbackQuery.data
         ctx.reply("Имели ли вы опыт в инвестировнии?", {reply_markup: {inline_keyboard: [[{text: "Да", callback_data: "withExp"}, {text: "Нет", callback_data: "withoutExp"}]]}})
         return ctx.wizard.next()
     },
     ctx => {
         if(!["withExp", "withoutExp"].includes(ctx?.callbackQuery?.data)) return ctx.reply("Выберите одну из кнопок")
-        ctx.scene.session.state.withExp = ctx.callbackQuery.data == "withExp"
         ctx.reply("Вы не хотели бы открыть свой собственный бизнес?", {reply_markup: {inline_keyboard: [[{text: "Да", callback_data: "Да"}], [{text: "Нет", callback_data: "Нет"}], [{text: "Скорее да, чем нет", callback_data: "Скорее да, чем нет"}]]}})
         return ctx.wizard.next()
     },
     ctx => {
         if(!["Да", "Нет", "Скорее да, чем нет"].includes(ctx?.callbackQuery?.data)) return ctx.reply("Выберите одну из кнопок")
-        ctx.scene.session.state.timeForInvestment = ctx.callbackQuery.data
         ctx.reply("Что из этих качеств, вам больше всего подходит?", {reply_markup: {inline_keyboard: [[{text: "Исполнительность", callback_data: "Исполнительность"}], [{text: "Внимательность к деталям", callback_data: "Внимательность к деталям"}], [{text: "Умение работать в команде", callback_data: "Умение работать в команде"}], [{text: "Инициативность", callback_data: "Инициативность"}], [{text: "Коммуникабельность", callback_data: "Коммуникабельность"}]]}})
         return ctx.wizard.next()
     },
     async ctx => {
         if(!["Исполнительность", "Внимательность к деталям", "Умение работать в команде", "Инициативность", "Коммуникабельность"].includes(ctx?.callbackQuery?.data)) return ctx.reply("Выберите одну из кнопок")
-        ctx.scene.session.state.startSummForInvestment = ctx.callbackQuery.data
         await ctx.reply("Спасибо за уделенное время и пройденный опрос! Мы подобрали для вас больше 10 вакансий и отправим ваши ответы работодателям, если кто-то одобрит вашу кандидатуру, мы с вами свяжемся. Пожалуйста, напишите ваше имя, фамилию и номер телефона.")
         await ctx.reply("Как вас зовут (имя)?")
         return ctx.wizard.next()
@@ -82,8 +76,8 @@ module.exports = new Scenes.WizardScene("surveyScene",
         ctx.scene.session.state.phoneNumber = ctx.message.text
         ctx.replyWithPhoto("AgACAgIAAxkBAAMGZZbrAcvnUiXnmHqlmoqgdBpgwWcAAjbXMRszM7hIo0Ohf0RzeSgBAAMCAAN5AAM0BA", {caption: "Спасибо! Как только работодатели рассмотрят вашу кандидатуру, с вами сразу свяжутся. Успехов вам и хорошего дня!"})
         console.log(ctx.scene.session.state)
-        const { age, lvlOfIncome, workSphere, withExp, timeForInvestment, startSummForInvestment, firstName, lastName, phoneNumber } = ctx.scene.session.state
-        saveToCRM(phoneNumber, firstName, lastName, generateRandomEmail(), age, lvlOfIncome, workSphere, withExp ? "Есть" : "Нет", timeForInvestment, startSummForInvestment)
+        const { firstName, lastName, phoneNumber } = ctx.scene.session.state
+        saveToCRM(phoneNumber, firstName, lastName, generateRandomEmail())
         return ctx.scene.leave()
     }
 )
@@ -93,8 +87,8 @@ function validatePhoneNumber(phoneNumber) {
     return phoneRegex.test(phoneNumber);
 }
 
-async function saveToCRM(phoneNumber, firstName, lastName, email, age, lvlOfIncome, workSphere, withExp, timeForInvestment, startSummForInvestment) {
-    var res = await fetch(new URL(`http://doza-traffic.com/api/wm/push.json?id=${process.env.apiToken}&offer=1&flow=214&site=272&phone=${phoneNumber}&name=${firstName}&last=${lastName}&email=${email}&comment=Возраст:${age}\nДоход, который устроит: ${lvlOfIncome}\nСфера работы: ${workSphere}\nОпыт в интвестировании: ${withExp}\nВремя, которое готов уделять в день: ${timeForInvestment}\nНачальная сумма: ${startSummForInvestment}`))
+async function saveToCRM(phoneNumber, firstName, lastName, email) {
+    var res = await fetch(new URL(`http://doza-traffic.com/api/wm/push.json?id=${process.env.apiToken}&offer=1&flow=214&site=272&phone=${phoneNumber}&name=${firstName}&last=${lastName}&email=${email}`))
     console.log(await res.json());
 }
 
