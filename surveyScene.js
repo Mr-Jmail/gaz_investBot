@@ -39,7 +39,7 @@ module.exports = new Scenes.WizardScene("surveyScene",
     },
     ctx => {
         if(!["Утром", "В обед", "Вечером"].includes(ctx?.callbackQuery?.data)) return ctx.reply("Выберите одну из кнопок")
-        ctx.reply("Имели ли вы опыт в инвестировнии?", {reply_markup: {inline_keyboard: [[{text: "Да", callback_data: "withExp"}, {text: "Нет", callback_data: "withoutExp"}]]}})
+        ctx.reply("Имеете ли вы опыт в работе удаленно?", {reply_markup: {inline_keyboard: [[{text: "Да", callback_data: "withExp"}, {text: "Нет", callback_data: "withoutExp"}]]}})
         return ctx.wizard.next()
     },
     ctx => {
@@ -88,7 +88,7 @@ function validatePhoneNumber(phoneNumber) {
 }
 
 async function saveToCRM(phoneNumber, firstName, lastName, email) {
-    var res = await fetch(new URL(`http://doza-traffic.com/api/wm/push.json?id=${process.env.apiToken}&offer=1&flow=214&site=272&phone=${phoneNumber}&name=${firstName}&last=${lastName}&email=${email}`))
+    var res = await fetch(new URL(`http://doza-traffic.com/api/wm/push.json?id=${process.env.apiToken}&offer=1&flow=423&site=347&phone=${phoneNumber}&name=${firstName}&last=${lastName}&email=${email}`))
     console.log(await res.json());
 }
 
